@@ -66,11 +66,14 @@ namespace TF2.MainConsole
 
 				if (hgUpdate.Succedded)
 				{
+					var position = commitList.IndexOf(commit) + 1;
+					var title = $"[{position}/{commitList.Count}] {commit.Hash}: {commit.Message}";
+
 					var answer = ask(() =>
 					{
 						Console.WriteLine();
 						Console.ForegroundColor = ConsoleColor.White;
-						Console.WriteLine($"{commit.Hash}: {commit.Message}");
+						Console.WriteLine(title);
 						Console.ResetColor();
 						Console.Write("Commit on git? (y/n) ");
 					}, "y", "n");
