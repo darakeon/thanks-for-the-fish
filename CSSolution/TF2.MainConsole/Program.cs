@@ -17,10 +17,16 @@ namespace TF2.MainConsole
 			File.ReadAllLines("disclaimer.txt")
 				.ToList().ForEach(Console.WriteLine);
 
-			var answer = ask(() => Console.Write("Do you agree (y/n)? "), "y", "n");
+			var answer = ask(() =>
+			{
+				Console.WriteLine();
+				Console.WriteLine($"Total commits: {commitList.Count}");
+				Console.Write("Do you want to go ahead? (y/n) ");
+			}, "y", "n");
 
 			if (answer.ToLower() == "n")
 			{
+				Console.WriteLine();
 				Console.WriteLine("Ok. See ya! o/");
 			}
 			else

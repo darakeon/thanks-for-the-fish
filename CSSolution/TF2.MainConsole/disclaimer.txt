@@ -1,28 +1,24 @@
 ﻿Hello!
 
-Your Mercurial repository was successfully find.
-Now, lets turn it in a Git repository.
-Please, be sure a git repository is initialized
-on the directory.
+Your Mercurial repository was successfully find. Please, be sure a
+git repository is initialized on the directory.
 
-In each commit, the command "git add ." is executed
-before commiting. The file .gitignore is copied
-from .hgignore too, being overwritten.
+In each commit, the command "git add ." is executed before commiting.
+The file .gitignore is copied from .hgignore too, being overwritten.
 
-The current version only works on ONE branch.
+The current version of the program works on ONE branch only.
 
-=====================================
+========================================================================
 IMPORTANT:
 
-Just start this process if you intent to finish it.
-If you stop the program or answer "No" to abstract commit,
-YOU WILL NEED TO START THE PROCESS FROM THE VERY BEGINNING!
-It happens if a datal error occurs too.
+Just start this process if you intent to finish it. If you stop the
+program or answer "No" to abstract commit, YOU WILL NEED TO START THE
+PROCESS FROM THE VERY BEGINNING! It happens if a fatal error occurs too.
+========================================================================
 
 "Oh, my god! Your program is a shit, how can you do this to me?!"
-You are welcome to implement the feature of stop commiting and
-start again or even ignore some commit to doing it yourself and
-keep commiting automatically after that.
+You are welcome to implement the feature of stop commiting and start
+again or even ignore some commit to doing it yourself and keep
+commiting automatically after that.
 
-https://github.com/darakeon/thanks-for-the-fishes
-=====================================
+https://github.com/darakeon/thanks-for-the-fish
