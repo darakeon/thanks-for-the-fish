@@ -8,6 +8,11 @@ namespace TF2.MainConsole
 {
 	internal class Hg
 	{
+		public static Terminal.Result GetLog(String sourceDirectory)
+		{
+			return Terminal.Run(sourceDirectory, "hg", "log");
+		}
+
 		public static IList<Commit> GetCommitList(String hgLog)
 		{
 			var logPattern = 

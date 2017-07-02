@@ -21,10 +21,8 @@ namespace TF2.MainConsole
 
 		private static IList<Commit> getCommitList(String sourceDirectory)
 		{
-			var hgLog = Terminal.Run(sourceDirectory, "hg", "log");
-
+			var hgLog = Hg.GetLog(sourceDirectory);
 			var commitList = Hg.GetCommitList(hgLog.Output);
-
 			return Hg.VerifyCommitList(commitList, show);
 		}
 
