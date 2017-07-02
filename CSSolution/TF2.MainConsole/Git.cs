@@ -31,7 +31,7 @@ namespace TF2.MainConsole
 				+ Environment.NewLine + Environment.NewLine
 				+ $"by [{commit.Author}] in [{date}]";
 
-            Terminal.Run(sourceDirectory, "git", "commit", $@"-m ""{message}""");
+            Terminal.Run(sourceDirectory, "git", "commit", $@"-m ""{message}""", "-q");
 		}
 	}
 }
