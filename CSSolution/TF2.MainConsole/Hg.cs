@@ -18,6 +18,7 @@ namespace TF2.MainConsole
 		{
 			var logPattern = 
 				$@"changeset: +(\d+):([a-z0-9]+){Environment.NewLine}"+
+				$@"(branch: +(.*){Environment.NewLine})?" +
 				$@"(tag: +(.*){Environment.NewLine})?" +
 				$@"(parent: +(.*){Environment.NewLine})?" +
 				$@"(parent: +(.*){Environment.NewLine})?" +
@@ -41,10 +42,10 @@ namespace TF2.MainConsole
 			{
 				Position = Int32.Parse(groups[1].Value),
 				Hash = groups[2].Value,
-				Tag = groups[4].Value,
-				Author = groups[9].Value,
-				DateTime = parseDate(groups[10].Value),
-				Message = parseMessage(groups[12].Value),
+				Tag = groups[6].Value,
+				Author = groups[11].Value,
+				DateTime = parseDate(groups[12].Value),
+				Message = parseMessage(groups[14].Value),
 			};
 		}
 
