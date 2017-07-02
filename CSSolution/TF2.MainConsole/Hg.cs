@@ -76,5 +76,10 @@ namespace TF2.MainConsole
 		}
 
 		public delegate void ShowWrongPosition(Int32 expected, Int32 received);
+
+		public static Terminal.Result Update(String sourceDirectory, Commit commit)
+		{
+			return Terminal.Run(sourceDirectory, "hg", "up", commit.Hash);
+		}
 	}
 }

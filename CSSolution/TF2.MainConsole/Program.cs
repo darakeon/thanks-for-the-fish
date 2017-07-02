@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace TF2.MainConsole
@@ -24,6 +25,11 @@ namespace TF2.MainConsole
 			}
 			else
 			{
+				commitOnGit(sourceDirectory, commitList);
+
+				Console.WriteLine();
+				Console.WriteLine($"Oh, my god! All {commitList.Count} commits done!");
+				Console.WriteLine("Mercurial, farewell and thanks for the fish!");
 			}
 
 			Console.Read();
@@ -41,6 +47,41 @@ namespace TF2.MainConsole
 			Console.WriteLine("Error on parsing commits:");
 			Console.WriteLine($"Commit with position {received} in repository is in position {expected} in list.");
 			Console.WriteLine($"Maybe the position {expected} in repository was not parsed.");
+		}
+
+		private static void commitOnGit(String sourceDirectory, IList<Commit> commitList)
+		{
+			foreach (var commit in commitList)
+			{
+				var hgUpdate = Hg.Update(sourceDirectory, commit);
+
+				if (hgUpdate.Succedded)
+				{
+					var answer = ask(() =>
+					{
+						Console.WriteLine();
+						Console.ForegroundColor = ConsoleColor.White;
+						Console.WriteLine($"{commit.Hash}: {commit.Message}");
+						Console.ResetColor();
+						Console.Write("Commit on git?");
+					}, "y", "n");
+
+					if (answer.ToLower() == "n")
+					{
+						Console.WriteLine("Process stopped. You've been warned.");
+						break;
+					}
+
+					Git.RemakeIgnore(sourceDirectory);
+					Git.AddAndCommit(sourceDirectory, commit);
+				}
+				else
+				{
+					Console.WriteLine("Sorry, we cannot progress, a problem occured with the update.");
+					Console.WriteLine(hgUpdate.Error ?? hgUpdate.Output);
+					break;
+				}
+			}
 		}
 
 		private static string ask(Action question, params String[] acceptedAnswers)

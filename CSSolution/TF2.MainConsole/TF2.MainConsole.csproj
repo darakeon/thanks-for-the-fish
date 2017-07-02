@@ -48,6 +48,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Compile Include="Commit.cs" />
+    <Compile Include="Git.cs" />
     <Compile Include="Hg.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
