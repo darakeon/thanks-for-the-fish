@@ -13,8 +13,18 @@ namespace TF2.MainConsole
 			var commitList = getCommitList(sourceDirectory);
 			if (commitList == null) return;
 
-			Console.WriteLine(commitList.Count);
-			commitList.ToList().ForEach(Console.WriteLine);
+			File.ReadAllLines("disclaimer.txt")
+				.ToList().ForEach(Console.WriteLine);
+
+			var answer = ask(() => Console.WriteLine("Do you agree (y/n)?"), "y", "n");
+
+			if (answer.ToLower() == "n")
+			{
+				Console.WriteLine("Ok. See ya! o/");
+			}
+			else
+			{
+			}
 
 			Console.Read();
 		}
@@ -33,5 +43,18 @@ namespace TF2.MainConsole
 			Console.WriteLine($"Maybe the position {expected} in repository was not parsed.");
 		}
 
+		private static string ask(Action question, params String[] acceptedAnswers)
+		{
+			String answer;
+
+			do
+			{
+				question();
+				answer = Console.ReadLine()?.ToLower();
+			}
+			while (!acceptedAnswers.Contains(answer));
+
+			return answer;
+		}
 	}
 }
