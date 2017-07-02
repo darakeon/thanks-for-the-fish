@@ -6,7 +6,7 @@ namespace TF2.MainConsole
 {
 	internal class Git
 	{
-		public static void RemakeIgnore(string sourceDirectory)
+		public static void RemakeIgnore(String sourceDirectory)
 		{
 			var hgIgnore = Path.Combine(sourceDirectory, ".hgignore");
 			var ignoreContent = File.ReadAllLines(hgIgnore).ToList();
@@ -20,7 +20,13 @@ namespace TF2.MainConsole
 		public static void AddAndCommit(String sourceDirectory, Commit commit)
 		{
 			Terminal.Run(sourceDirectory, "git", "add .");
-			Terminal.Run(sourceDirectory, "git", "commit", $@"-m ""{commit.Message}""");
+
+			var date = commit.DateTime.ToString(@"yyyy-MM-dd HH:mm:ss (K)");
+			var message = commit.Message
+				+ Environment.NewLine + Environment.NewLine
+				+ $"by [{commit.Author}] in [{date}]";
+
+            Terminal.Run(sourceDirectory, "git", "commit", $@"-m ""{message}""");
 		}
 	}
 }
