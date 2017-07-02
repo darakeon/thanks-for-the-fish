@@ -23,7 +23,7 @@ namespace TF2.MainConsole
 				$@"(parent: +(.*){Environment.NewLine})?" +
 				$@"user: +(.*){Environment.NewLine}" +
 				$@"date: +(.*){Environment.NewLine}" +
-				@"summary: +(.*)";
+				@"(summary: +(.*))?";
 
 			var logRegex = new Regex(logPattern);
 
@@ -44,7 +44,7 @@ namespace TF2.MainConsole
 				Tag = groups[4].Value,
 				Author = groups[9].Value,
 				DateTime = parseDate(groups[10].Value),
-				Message = parseMessage(groups[11].Value),
+				Message = parseMessage(groups[12].Value),
 			};
 		}
 
