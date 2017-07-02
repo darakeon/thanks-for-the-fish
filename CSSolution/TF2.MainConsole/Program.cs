@@ -25,11 +25,14 @@ namespace TF2.MainConsole
 			}
 			else
 			{
-				commitOnGit(sourceDirectory, commitList);
+				var succeded = commitOnGit(sourceDirectory, commitList);
 
-				Console.WriteLine();
-				Console.WriteLine($"Oh, my god! All {commitList.Count} commits done!");
-				Console.WriteLine("Mercurial, farewell and thanks for the fish!");
+				if (succeded)
+				{
+					Console.WriteLine();
+					Console.WriteLine($"Oh, my god! All {commitList.Count} commits done!");
+					Console.WriteLine("Mercurial, farewell and thanks for the fish!");
+				}
 			}
 
 			Console.Read();
@@ -49,7 +52,7 @@ namespace TF2.MainConsole
 			Console.WriteLine($"Maybe the position {expected} in repository was not parsed.");
 		}
 
-		private static void commitOnGit(String sourceDirectory, IList<Commit> commitList)
+		private static Boolean commitOnGit(String sourceDirectory, IList<Commit> commitList)
 		{
 			foreach (var commit in commitList)
 			{
@@ -69,7 +72,7 @@ namespace TF2.MainConsole
 					if (answer.ToLower() == "n")
 					{
 						Console.WriteLine("Process stopped. You've been warned.");
-						break;
+						return false;
 					}
 
 					Git.RemakeIgnore(sourceDirectory);
@@ -79,9 +82,11 @@ namespace TF2.MainConsole
 				{
 					Console.WriteLine("Sorry, we cannot progress, a problem occured with the update.");
 					Console.WriteLine(hgUpdate.Error ?? hgUpdate.Output);
-					break;
+					return false;
 				}
 			}
+
+			return true;
 		}
 
 		private static string ask(Action question, params String[] acceptedAnswers)
