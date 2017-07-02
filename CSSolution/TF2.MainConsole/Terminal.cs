@@ -8,31 +8,26 @@ namespace TF2.MainConsole
 {
 	public static class Terminal
 	{
+		public static Result Run(String directory, Encoding encoding, String command, params String[] args)
+		{
+			return run(directory, encoding, command, args, false);
+		}
+
 		public static Result Run(String directory, String command, params String[] args)
 		{
-			return run(directory, command, args, false);
+			return run(directory, null, command, args, false);
 		}
 
 		public static Result RunAsAdm(String directory, String command, params String[] args)
 		{
-			return run(directory, command, args, true);
+			return run(directory, null, command, args, true);
 		}
 
-		private static Result run(String directory, String command, String[] args, Boolean requestAdm)
+		private static Result run(String directory, Encoding encoding, String command, String[] args, Boolean requestAdm)
 		{
 			var joinedArgs = String.Join(" ", args);
 
-			var proc = new Process
-			{
-				StartInfo = new ProcessStartInfo(command, joinedArgs)
-				{
-					UseShellExecute = requestAdm,
-					RedirectStandardError = !requestAdm,
-					RedirectStandardInput = !requestAdm,
-					RedirectStandardOutput = !requestAdm,
-					WorkingDirectory = directory,
-				}
-			};
+			var proc = createProcess(directory, command, joinedArgs, requestAdm, encoding);
 
 			if (requestAdm)
 			{
@@ -45,6 +40,23 @@ namespace TF2.MainConsole
 			result.Process(proc);
 
 			return result;
+		}
+
+		private static Process createProcess(String directory, String command, String joinedArgs, Boolean requestAdm, Encoding encoding)
+		{
+			return new Process
+			{
+				StartInfo = new ProcessStartInfo(command, joinedArgs)
+				{
+					UseShellExecute = requestAdm,
+					RedirectStandardInput = !requestAdm,
+					RedirectStandardOutput = !requestAdm,
+					RedirectStandardError = !requestAdm,
+					StandardOutputEncoding = encoding,
+					StandardErrorEncoding = encoding,
+					WorkingDirectory = directory,
+				}
+			};
 		}
 
 		public class Result

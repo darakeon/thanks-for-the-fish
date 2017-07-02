@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace TF2.MainConsole
@@ -10,7 +11,7 @@ namespace TF2.MainConsole
 	{
 		public static Terminal.Result GetLog(String sourceDirectory)
 		{
-			return Terminal.Run(sourceDirectory, "hg", "log");
+			return Terminal.Run(sourceDirectory, Encoding.UTF7, "hg", "log");
 		}
 
 		public static IList<Commit> GetCommitList(String hgLog)
