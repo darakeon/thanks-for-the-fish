@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -9,7 +10,11 @@ namespace TF2.MainConsole
 		public static void RemakeIgnore(String sourceDirectory)
 		{
 			var hgIgnore = Path.Combine(sourceDirectory, ".hgignore");
-			var ignoreContent = File.ReadAllLines(hgIgnore).ToList();
+
+			var ignoreContent =
+				File.Exists(hgIgnore)
+					? File.ReadAllLines(hgIgnore).ToList()
+					: new List<String>();
 
 			ignoreContent.Add(".hg*");
 
