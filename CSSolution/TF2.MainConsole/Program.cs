@@ -11,6 +11,13 @@ namespace TF2.MainConsole
 		{
 			var sourceDirectory = args[0];
 
+			processCommits(sourceDirectory);
+
+			Console.Read();
+		}
+
+		private static void processCommits(String sourceDirectory)
+		{
 			var commitList = getCommitList(sourceDirectory);
 			if (commitList == null) return;
 
@@ -28,20 +35,15 @@ namespace TF2.MainConsole
 			{
 				Console.WriteLine();
 				Console.WriteLine("Ok. See ya! o/");
+				return;
 			}
-			else
-			{
-				var succeded = commitOnGit(sourceDirectory, commitList);
+			
+			var succeded = commitOnGit(sourceDirectory, commitList);
+			if (!succeded) return;
 
-				if (succeded)
-				{
-					Console.WriteLine();
-					Console.WriteLine($"Oh, my god! All {commitList.Count} commits done!");
-					Console.WriteLine("Mercurial, farewell and thanks for the fish!");
-				}
-			}
-
-			Console.Read();
+			Console.WriteLine();
+			Console.WriteLine($"Oh, my god! All {commitList.Count} commits done!");
+			Console.WriteLine("Mercurial, farewell and thanks for the fish!");
 		}
 
 		private static IList<Commit> getCommitList(String sourceDirectory)
