@@ -9,6 +9,8 @@ In each commit, the command "git add ." is executed
 before commiting. The file .gitignore is copied
 from .hgignore too, being overwritten.
 
+The current version only works on ONE branch.
+
 =====================================
 IMPORTANT:
 
