@@ -32,6 +32,11 @@ namespace TF2.MainConsole
 				+ $"by [{commit.Author}] in [{date}]";
 
             Terminal.Run(sourceDirectory, "git", "commit", $@"-m ""{message}""", "-q");
+
+			if (!String.IsNullOrEmpty(commit.Tag))
+			{
+				Terminal.Run(sourceDirectory, "git", "tag", commit.Tag);
+			}
 		}
 	}
 }
