@@ -17,7 +17,7 @@ namespace TF2.MainConsole
 			File.ReadAllLines("disclaimer.txt")
 				.ToList().ForEach(Console.WriteLine);
 
-			var answer = ask(() => Console.WriteLine("Do you agree (y/n)?"), "y", "n");
+			var answer = ask(() => Console.Write("Do you agree (y/n)? "), "y", "n");
 
 			if (answer.ToLower() == "n")
 			{
@@ -63,7 +63,7 @@ namespace TF2.MainConsole
 						Console.ForegroundColor = ConsoleColor.White;
 						Console.WriteLine($"{commit.Hash}: {commit.Message}");
 						Console.ResetColor();
-						Console.Write("Commit on git?");
+						Console.Write("Commit on git? (y/n) ");
 					}, "y", "n");
 
 					if (answer.ToLower() == "n")
