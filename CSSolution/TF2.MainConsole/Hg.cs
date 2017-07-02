@@ -16,6 +16,8 @@ namespace TF2.MainConsole
 
 		public static IList<Commit> GetCommitList(String hgLog)
 		{
+			var datePattern = @"\w{3} \w{3} \d{2} \d{2}:\d{2}:\d{2} \d{4}( [+-]\d{4})?";
+
 			var logPattern = 
 				$@"changeset: +(\d+):([a-z0-9]+){Environment.NewLine}"+
 				$@"(branch: +(.*){Environment.NewLine})?" +
@@ -23,17 +25,15 @@ namespace TF2.MainConsole
 				$@"(parent: +(.*){Environment.NewLine})?" +
 				$@"(parent: +(.*){Environment.NewLine})?" +
 				$@"user: +(.*){Environment.NewLine}" +
-				$@"date: +(.*){Environment.NewLine}" +
+				$@"date: +({datePattern}).*{Environment.NewLine}" +
 				@"(summary: +(.*))?";
 
 			var logRegex = new Regex(logPattern);
 
 			var commitMatches = logRegex.Matches(hgLog).Cast<Match>();
+			var commitList = commitMatches.Select(m => getCommit(m.Groups));
 
-			return commitMatches
-				.Select(m => getCommit(m.Groups))
-				.OrderBy(c => c.Position)
-				.ToList();
+			return commitList.OrderBy(c => c.Position).ToList();
 		}
 
 		private static Commit getCommit(GroupCollection groups)
@@ -44,14 +44,15 @@ namespace TF2.MainConsole
 				Hash = groups[2].Value,
 				Tag = groups[6].Value,
 				Author = groups[11].Value,
-				DateTime = parseDate(groups[12].Value),
-				Message = parseMessage(groups[14].Value),
+				DateTime = parseDate(groups[12].Value, groups[13].Value),
+				Message = parseMessage(groups[15].Value),
 			};
 		}
 
-		private static DateTime parseDate(String value)
+		private static DateTime parseDate(String value, String gmt)
 		{
-			var format = "ddd MMM dd HH:mm:ss yyyy K";
+			var hasGmt = String.IsNullOrEmpty(gmt);
+            var format = "ddd MMM dd HH:mm:ss yyyy" + (hasGmt ? "" : " K");
 			var culture = CultureInfo.InvariantCulture;
 			return DateTime.ParseExact(value, format, culture);
 		}
