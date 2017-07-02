@@ -53,5 +53,23 @@ namespace TF2.MainConsole
 		{
 			return Regex.Replace(value, "\r?\n", Environment.NewLine);
 		}
+
+		public static IList<Commit> VerifyCommitList(IList<Commit> commitList, ShowWrongPosition showWrongPosition)
+		{
+			for (var c = 0; c < commitList.Count; c++)
+			{
+				var hgPosition = commitList[c].Position;
+
+				if (c != hgPosition)
+				{
+					showWrongPosition(c, hgPosition);
+					return null;
+				}
+			}
+
+			return commitList;
+		}
+
+		public delegate void ShowWrongPosition(Int32 expected, Int32 received);
 	}
 }
