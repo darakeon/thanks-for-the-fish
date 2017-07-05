@@ -7,22 +7,17 @@ using System.Text.RegularExpressions;
 
 namespace TF2.MainConsole
 {
-	internal class Hg
+	internal class Hg : Terminal
 	{
-		private readonly String sourceDirectory;
-		
-		private Terminal.Result hgLog;
+		private Result hgLog;
 		
 		public IList<Commit> CommitList { get; private set; }
 
-		public Hg(String sourceDirectory)
-		{
-			this.sourceDirectory = sourceDirectory;
-		}
+		public Hg(String sourceDirectory) : base(sourceDirectory) { }
 
 		public Boolean PopulateCommitList(ShowSequenceError showSequenceError)
 		{
-			hgLog = Terminal.Run(sourceDirectory, Encoding.UTF7, "hg", "log");
+			hgLog = Run(Encoding.UTF7, "hg", "log");
 
 			parseCommitList();
 
@@ -94,9 +89,9 @@ namespace TF2.MainConsole
 			return true;
 		}
 
-		public Terminal.Result Update(Commit commit)
+		public Result Update(Commit commit)
 		{
-			return Terminal.Run(sourceDirectory, "hg", "up", commit.Hash);
+			return Run("hg", "up", commit.Hash);
 		}
 
 		public delegate void ShowSequenceError(Int32 expected, Int32 received);

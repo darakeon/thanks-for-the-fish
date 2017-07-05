@@ -5,11 +5,11 @@ using System.Linq;
 
 namespace TF2.MainConsole
 {
-	internal class Git
+	internal class Git : Terminal
 	{
 		private readonly string sourceDirectory;
 
-		public Git(String sourceDirectory)
+		public Git(String sourceDirectory) : base(sourceDirectory)
 		{
 			this.sourceDirectory = sourceDirectory;
 		}
@@ -31,18 +31,18 @@ namespace TF2.MainConsole
 
 		public void AddAndCommit(Commit commit)
 		{
-			Terminal.Run(sourceDirectory, "git", "add .");
+			Run("git", "add .");
 
 			var date = commit.DateTime.ToString(@"yyyy-MM-dd HH:mm:ss (K)");
 			var message = commit.Message
 				+ Environment.NewLine + Environment.NewLine
 				+ $"by [{commit.Author}] in [{date}]";
 
-            Terminal.Run(sourceDirectory, "git", "commit", $@"-m ""{message}""", "-q");
+            Run("git", "commit", $@"-m ""{message}""", "-q");
 
 			if (!String.IsNullOrEmpty(commit.Tag))
 			{
-				Terminal.Run(sourceDirectory, "git", "tag", commit.Tag);
+				Run("git", "tag", commit.Tag);
 			}
 		}
 
@@ -59,7 +59,7 @@ namespace TF2.MainConsole
 				Directory.Delete(gitConfig, true);
 			}
 
-			Terminal.Run(sourceDirectory, "git", "init");
+			Run("git", "init");
 		}
 	}
 }

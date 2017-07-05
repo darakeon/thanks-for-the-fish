@@ -1,33 +1,38 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace TF2.MainConsole
 {
-	public static class Terminal
+	public abstract class Terminal
 	{
-		public static Result Run(String directory, Encoding encoding, String command, params String[] args)
+		private readonly String directory;
+
+		protected Terminal(String directory)
 		{
-			return run(directory, encoding, command, args, false);
+			this.directory = directory;
 		}
 
-		public static Result Run(String directory, String command, params String[] args)
+        protected Result Run(Encoding encoding, String command, params String[] args)
 		{
-			return run(directory, null, command, args, false);
+			return run(encoding, command, args, false);
 		}
 
-		public static Result RunAsAdm(String directory, String command, params String[] args)
+		protected Result Run(String command, params String[] args)
 		{
-			return run(directory, null, command, args, true);
+			return run(null, command, args, false);
 		}
 
-		private static Result run(String directory, Encoding encoding, String command, String[] args, Boolean requestAdm)
+		protected Result RunAsAdm(String command, params String[] args)
+		{
+			return run(null, command, args, true);
+		}
+
+		private Result run(Encoding encoding, String command, String[] args, Boolean requestAdm)
 		{
 			var joinedArgs = String.Join(" ", args);
 
-			var proc = createProcess(directory, command, joinedArgs, requestAdm, encoding);
+			var proc = createProcess(command, joinedArgs, requestAdm, encoding);
 
 			if (requestAdm)
 			{
@@ -42,7 +47,7 @@ namespace TF2.MainConsole
 			return result;
 		}
 
-		private static Process createProcess(String directory, String command, String joinedArgs, Boolean requestAdm, Encoding encoding)
+		private Process createProcess(String command, String joinedArgs, Boolean requestAdm, Encoding encoding)
 		{
 			return new Process
 			{
