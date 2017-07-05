@@ -84,12 +84,5 @@ namespace TF2.MainConsole
 			public String Output { get; private set; }
 			public String Error { get; private set; }
 		}
-
-		public static String ReadClean(this StreamReader reader)
-		{
-			var result = reader.ReadToEnd();
-			result = Regex.Replace(result, @"\0", "");
-			return result.Trim();
-		}
 	}
 }
