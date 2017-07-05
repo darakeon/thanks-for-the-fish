@@ -91,7 +91,7 @@ namespace TF2.MainConsole
 
 		public Result Update(Commit commit)
 		{
-			return Run("hg", "up", commit.Hash);
+			return Run("hg", "up", commit.Hash, "-C");
 		}
 
 		public delegate void ShowSequenceError(Int32 expected, Int32 received);
