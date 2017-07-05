@@ -49,6 +49,7 @@
     </Content>
     <Compile Include="Commit.cs" />
     <Compile Include="Git.cs" />
+    <Compile Include="Git2Hg.cs" />
     <Compile Include="Hg.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

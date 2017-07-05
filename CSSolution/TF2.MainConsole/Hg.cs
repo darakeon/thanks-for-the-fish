@@ -9,12 +9,19 @@ namespace TF2.MainConsole
 {
 	internal class Hg
 	{
-		public static Terminal.Result GetLog(String sourceDirectory)
+		public static IList<Commit> GetCommitList(String sourceDirectory, ShowWrongPosition show)
+		{
+			var hgLog = getLog(sourceDirectory);
+			var commitList = getCommitList(hgLog.Output);
+			return verifyCommitList(commitList, show);
+		}
+
+		private static Terminal.Result getLog(String sourceDirectory)
 		{
 			return Terminal.Run(sourceDirectory, Encoding.UTF7, "hg", "log");
 		}
 
-		public static IList<Commit> GetCommitList(String hgLog)
+		private static IList<Commit> getCommitList(String hgLog)
 		{
 			var datePattern = @"\w{3} \w{3} \d{2} \d{2}:\d{2}:\d{2} \d{4}( [+-]\d{4})?";
 
@@ -62,7 +69,7 @@ namespace TF2.MainConsole
 			return Regex.Replace(value, "\r?\n", Environment.NewLine);
 		}
 
-		public static IList<Commit> VerifyCommitList(IList<Commit> commitList, ShowWrongPosition showWrongPosition)
+		private static IList<Commit> verifyCommitList(IList<Commit> commitList, ShowWrongPosition showWrongPosition)
 		{
 			for (var c = 0; c < commitList.Count; c++)
 			{
@@ -84,5 +91,6 @@ namespace TF2.MainConsole
 		{
 			return Terminal.Run(sourceDirectory, "hg", "up", commit.Hash);
 		}
+
 	}
 }
