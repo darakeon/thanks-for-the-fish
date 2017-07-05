@@ -17,22 +17,24 @@ namespace TF2.MainConsole
 
 		private static void processCommits(String sourceDirectory)
 		{
-			var commitList = Hg.GetCommitList(sourceDirectory, showCountError);
-			if (commitList == null) return;
+			var git2Hg = new Git2Hg(sourceDirectory);
+
+			var populated = git2Hg.PopulateCommitList(showSequenceError);
+			if (!populated) return;
 
 			File.ReadAllLines("disclaimer.txt")
 				.ToList().ForEach(Console.WriteLine);
 
-			var shouldGoAhead = askGoAhead(commitList.Count);
+			var shouldGoAhead = askGoAhead(git2Hg.CommitCount);
 			if (!shouldGoAhead) return;
 
-			var succeded = Git2Hg.CommitOnGit(sourceDirectory, commitList, askCommit, showUpdateError);
+			var succeded = git2Hg.CommitOnGit(showUpdateError, askCommit);
 			if (!succeded) return;
 
-			finishSucceded(commitList.Count);
+			finishSucceded(git2Hg.CommitCount);
 		}
 
-		private static void showCountError(Int32 expected, Int32 received)
+		private static void showSequenceError(Int32 expected, Int32 received)
 		{
 			Console.WriteLine("Error on parsing commits:");
 			Console.WriteLine($"Commit with position {received} in repository is in position {expected} in list.");
@@ -54,6 +56,12 @@ namespace TF2.MainConsole
 			return false;
 		}
 
+		private static void showUpdateError(Terminal.Result hgUpdate)
+		{
+			Console.WriteLine("Sorry, we cannot progress, a problem occured with the update.");
+			Console.WriteLine(hgUpdate.Error ?? hgUpdate.Output);
+		}
+
 		private static Boolean askCommit(String title)
 		{
 			var answer = ask(() =>
@@ -68,12 +76,6 @@ namespace TF2.MainConsole
 
 			Console.WriteLine("Process stopped. You've been warned.");
 			return false;
-		}
-
-		private static void showUpdateError(Terminal.Result hgUpdate)
-		{
-			Console.WriteLine("Sorry, we cannot progress, a problem occured with the update.");
-			Console.WriteLine(hgUpdate.Error ?? hgUpdate.Output);
 		}
 
 		private static void finishSucceded(Int32 commitCount)

@@ -1,35 +1,55 @@
 using System;
-using System.Collections.Generic;
 
 namespace TF2.MainConsole
 {
-	class Git2Hg
+	internal class Git2Hg
 	{
-		public static Boolean CommitOnGit(String sourceDirectory, IList<Commit> commitList, Func<String, Boolean> askCommit, Action<Terminal.Result> showUpdateError)
+		private readonly Hg hg;
+		private readonly Git git;
+
+		public Int32 CommitCount => hg?.CommitList?.Count ?? 0;
+
+		public Git2Hg(String sourceDirectory)
 		{
-			foreach (var commit in commitList)
+			hg = new Hg(sourceDirectory);
+			git = new Git(sourceDirectory);
+		}
+
+		public Boolean PopulateCommitList(Hg.ShowSequenceError showSequenceError)
+		{
+			return hg.PopulateCommitList(showSequenceError);
+		}
+
+		public Boolean CommitOnGit(ShowUpdateError showUpdateError, AskCommit askCommit)
+		{
+			for (var c = 0; c < hg.CommitList.Count; c++)
 			{
-				var hgUpdate = Hg.Update(sourceDirectory, commit);
+				var commit = hg.CommitList[c];
 
-				if (hgUpdate.Succedded)
-				{
-					var position = commitList.IndexOf(commit) + 1;
-					var title = $"[{position}/{commitList.Count}] {commit.Hash}: {commit.Message}";
-
-					var shouldCommit = askCommit(title);
-					if (!shouldCommit) return false;
-
-					Git.RemakeIgnore(sourceDirectory);
-					Git.AddAndCommit(sourceDirectory, commit);
-				}
-				else
+				var hgUpdate = hg.Update(commit);
+				if (!hgUpdate.Succedded)
 				{
 					showUpdateError(hgUpdate);
 					return false;
 				}
+				
+				var position = c + 1;
+				var title = $"[{position}/{CommitCount}] {commit.Hash}: {commit.Message}";
+
+				var shouldCommit = askCommit(title);
+				if (!shouldCommit)
+				{
+					return false;
+				}
+
+				git.RemakeIgnore();
+				git.AddAndCommit(commit);
 			}
 
 			return true;
 		}
+
+		public delegate Boolean AskCommit(String commitTitle);
+		public delegate void ShowUpdateError(Terminal.Result errorResult);
 	}
 }

@@ -7,7 +7,14 @@ namespace TF2.MainConsole
 {
 	internal class Git
 	{
-		public static void RemakeIgnore(String sourceDirectory)
+		private readonly string sourceDirectory;
+
+		public Git(String sourceDirectory)
+		{
+			this.sourceDirectory = sourceDirectory;
+		}
+
+		public void RemakeIgnore()
 		{
 			var hgIgnore = Path.Combine(sourceDirectory, ".hgignore");
 
@@ -22,7 +29,7 @@ namespace TF2.MainConsole
             File.WriteAllLines(gitIgnore, ignoreContent);
 		}
 
-		public static void AddAndCommit(String sourceDirectory, Commit commit)
+		public void AddAndCommit(Commit commit)
 		{
 			Terminal.Run(sourceDirectory, "git", "add .");
 

@@ -9,19 +9,27 @@ namespace TF2.MainConsole
 {
 	internal class Hg
 	{
-		public static IList<Commit> GetCommitList(String sourceDirectory, ShowWrongPosition show)
+		private readonly String sourceDirectory;
+		
+		private Terminal.Result hgLog;
+		
+		public IList<Commit> CommitList { get; private set; }
+
+		public Hg(String sourceDirectory)
 		{
-			var hgLog = getLog(sourceDirectory);
-			var commitList = getCommitList(hgLog.Output);
-			return verifyCommitList(commitList, show);
+			this.sourceDirectory = sourceDirectory;
 		}
 
-		private static Terminal.Result getLog(String sourceDirectory)
+		public Boolean PopulateCommitList(ShowSequenceError showSequenceError)
 		{
-			return Terminal.Run(sourceDirectory, Encoding.UTF7, "hg", "log");
+			hgLog = Terminal.Run(sourceDirectory, Encoding.UTF7, "hg", "log");
+
+			parseCommitList();
+
+			return validateCommitList(showSequenceError);
 		}
 
-		private static IList<Commit> getCommitList(String hgLog)
+		private void parseCommitList()
 		{
 			var datePattern = @"\w{3} \w{3} \d{2} \d{2}:\d{2}:\d{2} \d{4}( [+-]\d{4})?";
 
@@ -37,13 +45,14 @@ namespace TF2.MainConsole
 
 			var logRegex = new Regex(logPattern);
 
-			var commitMatches = logRegex.Matches(hgLog).Cast<Match>();
-			var commitList = commitMatches.Select(m => getCommit(m.Groups));
-
-			return commitList.OrderBy(c => c.Position).ToList();
+			var commitMatches = logRegex.Matches(hgLog.Output).Cast<Match>();
+			
+			CommitList = commitMatches
+				.Select(m => getCommit(m.Groups))
+				.OrderBy(c => c.Position).ToList();
 		}
 
-		private static Commit getCommit(GroupCollection groups)
+		private Commit getCommit(GroupCollection groups)
 		{
 			return new Commit
 			{
@@ -56,7 +65,7 @@ namespace TF2.MainConsole
 			};
 		}
 
-		private static DateTime parseDate(String value, String gmt)
+		private DateTime parseDate(String value, String gmt)
 		{
 			var hasGmt = String.IsNullOrEmpty(gmt);
             var format = "ddd MMM dd HH:mm:ss yyyy" + (hasGmt ? "" : " K");
@@ -64,33 +73,32 @@ namespace TF2.MainConsole
 			return DateTime.ParseExact(value, format, culture);
 		}
 
-		private static String parseMessage(String value)
+		private String parseMessage(String value)
 		{
 			return Regex.Replace(value, "\r?\n", Environment.NewLine);
 		}
 
-		private static IList<Commit> verifyCommitList(IList<Commit> commitList, ShowWrongPosition showWrongPosition)
+		private Boolean validateCommitList(ShowSequenceError showSequenceError)
 		{
-			for (var c = 0; c < commitList.Count; c++)
+			for (var c = 0; c < CommitList.Count; c++)
 			{
-				var hgPosition = commitList[c].Position;
+				var hgPosition = CommitList[c].Position;
 
-				if (c != hgPosition)
-				{
-					showWrongPosition(c, hgPosition);
-					return null;
-				}
+				if (c == hgPosition) continue;
+
+				showSequenceError(c, hgPosition);
+				CommitList = null;
+				return false;
 			}
 
-			return commitList;
+			return true;
 		}
 
-		public delegate void ShowWrongPosition(Int32 expected, Int32 received);
-
-		public static Terminal.Result Update(String sourceDirectory, Commit commit)
+		public Terminal.Result Update(Commit commit)
 		{
 			return Terminal.Run(sourceDirectory, "hg", "up", commit.Hash);
 		}
 
+		public delegate void ShowSequenceError(Int32 expected, Int32 received);
 	}
 }
