@@ -28,7 +28,7 @@ namespace TF2.MainConsole
 			var shouldGoAhead = askGoAhead(git2Hg.CommitCount);
 			if (!shouldGoAhead) return;
 
-			var succeded = git2Hg.CommitOnGit(showUpdateError, askCommit);
+			var succeded = git2Hg.CommitOnGit(askOverwriteGit, showUpdateError, askCommit);
 			if (!succeded) return;
 
 			finishSucceded(git2Hg.CommitCount);
@@ -54,6 +54,17 @@ namespace TF2.MainConsole
 			Console.WriteLine();
 			Console.WriteLine("Ok. See ya! o/");
 			return false;
+		}
+
+		private static Boolean askOverwriteGit()
+		{
+			var answer = ask(() =>
+			{
+				Console.WriteLine("Git already exists at this directory.");
+				Console.Write("Do you want to overwrite or keep commiting on it? (o/k) ");
+			}, "o", "k");
+
+			return answer.ToLower() == "o";
 		}
 
 		private static void showUpdateError(Terminal.Result hgUpdate)

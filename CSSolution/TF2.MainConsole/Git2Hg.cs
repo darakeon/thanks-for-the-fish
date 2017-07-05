@@ -20,8 +20,10 @@ namespace TF2.MainConsole
 			return hg.PopulateCommitList(showSequenceError);
 		}
 
-		public Boolean CommitOnGit(ShowUpdateError showUpdateError, AskCommit askCommit)
+		public Boolean CommitOnGit(Git.AskOverwrite askOverwriteGit, ShowUpdateError showUpdateError, AskCommit askCommit)
 		{
+			git.Init(askOverwriteGit);
+
 			for (var c = 0; c < hg.CommitList.Count; c++)
 			{
 				var commit = hg.CommitList[c];

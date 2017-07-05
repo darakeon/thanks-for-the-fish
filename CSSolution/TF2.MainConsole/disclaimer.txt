@@ -1,7 +1,6 @@
 ﻿Hello!
 
-Your Mercurial repository was successfully find. Please, be sure a
-git repository is initialized on the directory.
+Your Mercurial repository was successfully find.
 
 In each commit, the command "git add ." is executed before commiting.
 The file .gitignore is copied from .hgignore too, being overwritten.

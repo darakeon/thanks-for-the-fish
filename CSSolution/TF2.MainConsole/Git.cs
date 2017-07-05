@@ -45,5 +45,21 @@ namespace TF2.MainConsole
 				Terminal.Run(sourceDirectory, "git", "tag", commit.Tag);
 			}
 		}
+
+		internal delegate Boolean AskOverwrite();
+
+		public void Init(AskOverwrite askOverwrite)
+		{
+			var gitConfig = Path.Combine(sourceDirectory, ".git");
+
+			if (Directory.Exists(gitConfig))
+			{
+				var shouldOverwrite = askOverwrite();
+				if (!shouldOverwrite) return;
+				Directory.Delete(gitConfig, true);
+			}
+
+			Terminal.Run(sourceDirectory, "git", "init");
+		}
 	}
 }
