@@ -86,7 +86,7 @@ namespace TF2.MainConsole
 		{
 			var answer = ask(() =>
 			{
-				Console.ForegroundColor = ConsoleColor.White;
+				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine(title);
 				Console.ResetColor();
 				Console.Write("Commit on git? (y/n) ");
