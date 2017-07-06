@@ -18,6 +18,7 @@ FROM THE VERY BEGINNING! It happens if a fatal error occurs too.
 "Oh, my god! Your program is a shit, how can you do this to me?!"
 You are welcome to implement the feature of stop commiting and start
 again or even ignore some commit to doing it yourself and keep
-commiting automatically after that.
+commiting automatically after that. The branches handling is a desired
+thing too.
 
 https://github.com/darakeon/thanks-for-the-fish
