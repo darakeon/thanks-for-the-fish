@@ -38,13 +38,14 @@ namespace TF2.MainConsole
 				var position = c + 1;
 				var title = $"[{position}/{CommitCount}] {commit.Hash}: {commit.Message}";
 
+				git.RemakeIgnore();
+
 				var shouldCommit = askCommit(title);
 				if (!shouldCommit)
 				{
 					return false;
 				}
 
-				git.RemakeIgnore();
 				git.AddAndCommit(commit);
 			}
 
