@@ -10,15 +10,14 @@ The current version of the program works on ONE branch only.
 ========================================================================
 IMPORTANT:
 
-Just start this process if you intent to finish it. If you stop the
-program or answer "No" to commit, YOU WILL NEED TO START THE PROCESS
-FROM THE VERY BEGINNING! It happens if a fatal error occurs too.
+If you stop the program or answer "No" to commit, it will stop at that
+commit and ask to start from there. There is no commit ignoring
+implemented.
 ========================================================================
 
 "Oh, my god! Your program is a shit, how can you do this to me?!"
-You are welcome to implement the feature of stop commiting and start
-again or even ignore some commit to doing it yourself and keep
-commiting automatically after that. The branches handling is a desired
-thing too.
+You are welcome to implement the feature of ignore some commit to doing
+it yourself and keep commiting on program after that. The branches
+handling is a desired thing too.
 
 https://github.com/darakeon/thanks-for-the-fish

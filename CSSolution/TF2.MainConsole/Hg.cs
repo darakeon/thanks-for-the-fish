@@ -10,18 +10,19 @@ namespace TF2.MainConsole
 	internal class Hg : Terminal
 	{
 		private Result hgLog;
-		
-		public IList<Commit> CommitList { get; private set; }
+		private IList<Commit> commitList;
 
 		public Hg(String sourceDirectory) : base(sourceDirectory) { }
 
-		public Boolean PopulateCommitList(ShowSequenceError showSequenceError)
+		public IList<Commit> PopulateCommitList(ShowSequenceError showSequenceError)
 		{
 			hgLog = Run(Encoding.UTF7, "hg", "log");
 
 			parseCommitList();
 
-			return validateCommitList(showSequenceError);
+			var isValid = validateCommitList(showSequenceError);
+
+			return isValid ? commitList : null;
 		}
 
 		private void parseCommitList()
@@ -42,7 +43,7 @@ namespace TF2.MainConsole
 
 			var commitMatches = logRegex.Matches(hgLog.Output).Cast<Match>();
 			
-			CommitList = commitMatches
+			commitList = commitMatches
 				.Select(m => getCommit(m.Groups))
 				.OrderBy(c => c.Position).ToList();
 		}
@@ -75,14 +76,13 @@ namespace TF2.MainConsole
 
 		private Boolean validateCommitList(ShowSequenceError showSequenceError)
 		{
-			for (var c = 0; c < CommitList.Count; c++)
+			for (var c = 0; c < commitList.Count; c++)
 			{
-				var hgPosition = CommitList[c].Position;
+				var hgPosition = commitList[c].Position;
 
 				if (c == hgPosition) continue;
 
 				showSequenceError(c, hgPosition);
-				CommitList = null;
 				return false;
 			}
 

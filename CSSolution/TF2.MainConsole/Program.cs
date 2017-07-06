@@ -28,7 +28,7 @@ namespace TF2.MainConsole
 			var shouldGoAhead = askGoAhead(git2Hg.CommitCount);
 			if (!shouldGoAhead) return;
 
-			var succeded = git2Hg.CommitOnGit(askOverwriteGit, showUpdateError, askCommit);
+			var succeded = git2Hg.CommitOnGit(askOverwriteGit, notifyNewCount, showUpdateError, askCommit);
 			if (!succeded) return;
 
 			finishSucceded(git2Hg.CommitCount);
@@ -67,6 +67,15 @@ namespace TF2.MainConsole
 			return answer.ToLower() == "o";
 		}
 
+		private static void notifyNewCount(Int32 oldCount, Int32 newCount)
+		{
+			Console.WriteLine();
+			Console.ForegroundColor = ConsoleColor.Cyan;
+			Console.WriteLine($"From log, there is {oldCount - newCount} commit(s) already recorded on git.");
+			Console.WriteLine($"New commits count: {newCount}.");
+			Console.ResetColor();
+		}
+
 		private static void showUpdateError(Terminal.Result hgUpdate)
 		{
 			Console.WriteLine("Sorry, we cannot progress, a problem occured with the update.");
@@ -85,7 +94,7 @@ namespace TF2.MainConsole
 
 			if (answer.ToLower() != "n") return true;
 
-			Console.WriteLine("Process stopped. You've been warned.");
+			Console.WriteLine("Process stopped.");
 			return false;
 		}
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace TF2.MainConsole
 {
@@ -7,7 +8,8 @@ namespace TF2.MainConsole
 		private readonly Hg hg;
 		private readonly Git git;
 
-		public Int32 CommitCount => hg?.CommitList?.Count ?? 0;
+		public Int32 CommitCount => commitList?.Count ?? 0;
+		private IList<Commit> commitList;
 
 		public Git2Hg(String sourceDirectory)
 		{
@@ -17,16 +19,17 @@ namespace TF2.MainConsole
 
 		public Boolean PopulateCommitList(Hg.ShowSequenceError showSequenceError)
 		{
-			return hg.PopulateCommitList(showSequenceError);
+			commitList = hg.PopulateCommitList(showSequenceError);
+			return commitList != null;
 		}
 
-		public Boolean CommitOnGit(Git.AskOverwrite askOverwriteGit, ShowUpdateError showUpdateError, AskCommit askCommit)
+		public Boolean CommitOnGit(Git.AskOverwrite askOverwriteGit, Git.NotifyNewCount notifyNewCount, ShowUpdateError showUpdateError, AskCommit askCommit)
 		{
-			git.Init(askOverwriteGit);
+			git.Init(askOverwriteGit, notifyNewCount, commitList);
 
-			for (var c = 0; c < hg.CommitList.Count; c++)
+			for (var c = 0; c < commitList.Count; c++)
 			{
-				var commit = hg.CommitList[c];
+				var commit = commitList[c];
 
 				var hgUpdate = hg.Update(commit);
 				if (!hgUpdate.Succedded)
