@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace TF2.MainConsole
 {
@@ -21,10 +22,10 @@ namespace TF2.MainConsole
 			set { tag = value == "tip" ? null : value; }
 		}
 
+		public List<Commit> ParentList { get; set; }
 		public String Author { get; set; }
 		public DateTime DateTime { get; set; }
 		public String Message { get; set; }
-
 
 		public override string ToString()
 		{
