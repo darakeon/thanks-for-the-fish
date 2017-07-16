@@ -14,6 +14,35 @@ namespace TF2.MainConsole
 		{
 			this.sourceDirectory = sourceDirectory;
 		}
+		
+		internal delegate Boolean AskOverwrite();
+		internal delegate void NotifyNewCount(Int32 oldCount, Int32 newCount);
+
+		public void Init(AskOverwrite askOverwrite, NotifyNewCount notifyNewCount, IList<Commit> commitList)
+		{
+			var gitConfig = Path.Combine(sourceDirectory, ".git");
+
+			if (Directory.Exists(gitConfig))
+			{
+				var shouldOverwrite = askOverwrite();
+
+				if (!shouldOverwrite)
+				{
+					var oldCount = commitList.Count;
+					removeAlreadyCommited(commitList);
+					var newCount = commitList.Count;
+
+					if (oldCount != newCount) notifyNewCount(oldCount, newCount);
+
+					return;
+				}
+
+				Directory.Delete(gitConfig, true);
+			}
+
+			Run("git", "init");
+			File.WriteAllText(alreadyCommitedFile, String.Empty);
+		}
 
 		private void removeAlreadyCommited(IList<Commit> commitList)
 		{
@@ -59,35 +88,6 @@ namespace TF2.MainConsole
 			{
 				Run("git", "tag", commit.Tag);
 			}
-		}
-
-		internal delegate Boolean AskOverwrite();
-		internal delegate void NotifyNewCount(Int32 oldCount, Int32 newCount);
-
-		public void Init(AskOverwrite askOverwrite, NotifyNewCount notifyNewCount, IList<Commit> commitList)
-		{
-			var gitConfig = Path.Combine(sourceDirectory, ".git");
-
-			if (Directory.Exists(gitConfig))
-			{
-				var shouldOverwrite = askOverwrite();
-				
-				if (!shouldOverwrite)
-				{
-					var oldCount = commitList.Count;
-					removeAlreadyCommited(commitList);
-					var newCount = commitList.Count;
-
-					if (oldCount != newCount) notifyNewCount(oldCount, newCount);
-                    
-					return;
-				}
-
-				Directory.Delete(gitConfig, true);
-			}
-
-			Run("git", "init");
-			File.WriteAllText(alreadyCommitedFile, String.Empty);
 		}
 	}
 }
