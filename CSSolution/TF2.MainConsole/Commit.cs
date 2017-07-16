@@ -14,7 +14,13 @@ namespace TF2.MainConsole
 			set { branch = String.IsNullOrEmpty(value) ? Git.DEFAULT_BRANCH : value; }
 		}
 
-		public String Tag { get; set; }
+		private String tag;
+		public String Tag
+		{
+			get { return tag; }
+			set { tag = value == "tip" ? null : value; }
+		}
+
 		public String Author { get; set; }
 		public DateTime DateTime { get; set; }
 		public String Message { get; set; }
