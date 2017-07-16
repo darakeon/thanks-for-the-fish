@@ -54,6 +54,7 @@ namespace TF2.MainConsole
 			{
 				Position = Int32.Parse(groups[1].Value),
 				Hash = groups[2].Value,
+				Branch = groups[4].Value,
 				Tag = groups[6].Value,
 				Author = groups[11].Value,
 				DateTime = parseDate(groups[12].Value, groups[13].Value),

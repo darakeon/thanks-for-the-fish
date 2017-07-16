@@ -49,6 +49,7 @@ namespace TF2.MainConsole
 					return false;
 				}
 
+				git.HandleBranch(commit);
 				git.AddAndCommit(commit);
 			}
 

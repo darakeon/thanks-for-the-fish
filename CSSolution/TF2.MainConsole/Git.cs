@@ -8,6 +8,9 @@ namespace TF2.MainConsole
 	internal class Git : Terminal
 	{
 		private readonly String sourceDirectory;
+		public const String DEFAULT_BRANCH = "master";
+		private String currentBranch = DEFAULT_BRANCH;
+		private readonly IList<String> branches = new List<String> { DEFAULT_BRANCH };
 		private String alreadyCommitedFile => Path.Combine(sourceDirectory, ".git", "hg-already-commited.txt");
 
 		public Git(String sourceDirectory) : base(sourceDirectory)
@@ -69,6 +72,23 @@ namespace TF2.MainConsole
 
 			var gitIgnore = Path.Combine(sourceDirectory, ".gitignore");
             File.WriteAllLines(gitIgnore, ignoreContent);
+		}
+
+		public void HandleBranch(Commit commit)
+		{
+			if (commit.Branch == currentBranch) return;
+			
+			if (branches.Contains(commit.Branch))
+			{
+				Run("git", "checkout", commit.Branch);
+			}
+			else
+			{
+				Run("git", "checkout", "-b", commit.Branch);
+				branches.Add(commit.Branch);
+			}
+
+			currentBranch = commit.Branch;
 		}
 
 		public void AddAndCommit(Commit commit)
