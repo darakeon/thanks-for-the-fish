@@ -104,9 +104,9 @@ namespace TF2.MainConsole
 			return true;
 		}
 
-		public Result Update(Commit commit)
+		public void Update(Commit commit)
 		{
-			return Run("hg", "up", commit.Hash, "-C");
+			Run("hg", "up", commit.HgHash, "-C");
 		}
 
 		public delegate void ShowSequenceError(Int32 expected, Int32 received);

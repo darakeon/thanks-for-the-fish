@@ -44,6 +44,15 @@ namespace TF2.MainConsole
 			var result = new Result();
 			result.Process(proc);
 
+			if (!result.Succedded)
+			{
+				throw new Exception(
+					$"Error on: {command} {joinedArgs}"
+                    + Environment.NewLine + result.Output 
+					+ Environment.NewLine + result.Error
+				);
+			}
+
 			return result;
 		}
 

@@ -28,7 +28,7 @@ namespace TF2.MainConsole
 			var shouldGoAhead = askGoAhead(git2Hg.CommitCount);
 			if (!shouldGoAhead) return;
 
-			var succeded = git2Hg.CommitOnGit(askOverwriteGit, notifyNewCount, showUpdateError, askCommit);
+			var succeded = git2Hg.CommitOnGit(askOverwriteGit, notifyNewCount, askCommit);
 			if (!succeded) return;
 
 			finishSucceded(git2Hg.CommitCount);
@@ -74,12 +74,6 @@ namespace TF2.MainConsole
 			Console.WriteLine($"From log, there is {oldCount - newCount} commit(s) already recorded on git.");
 			Console.WriteLine($"New commits count: {newCount}.");
 			Console.ResetColor();
-		}
-
-		private static void showUpdateError(Terminal.Result hgUpdate)
-		{
-			Console.WriteLine("Sorry, we cannot progress, a problem occured with the update.");
-			Console.WriteLine(hgUpdate.Error ?? hgUpdate.Output);
 		}
 
 		private static Boolean askCommit(String title)

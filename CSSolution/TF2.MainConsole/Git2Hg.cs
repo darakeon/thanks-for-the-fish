@@ -23,7 +23,7 @@ namespace TF2.MainConsole
 			return commitList != null;
 		}
 
-		public Boolean CommitOnGit(Git.AskOverwrite askOverwriteGit, Git.NotifyNewCount notifyNewCount, ShowUpdateError showUpdateError, AskCommit askCommit)
+		public Boolean CommitOnGit(Git.AskOverwrite askOverwriteGit, Git.NotifyNewCount notifyNewCount, AskCommit askCommit)
 		{
 			git.Init(askOverwriteGit, notifyNewCount, commitList);
 
@@ -31,12 +31,7 @@ namespace TF2.MainConsole
 			{
 				var commit = commitList[c];
 
-				var hgUpdate = hg.Update(commit);
-				if (!hgUpdate.Succedded)
-				{
-					showUpdateError(hgUpdate);
-					return false;
-				}
+				hg.Update(commit);
 				
 				var position = c + 1;
 				var title = $"[{position}/{CommitCount}] {commit.Hash}: {commit.Message}";
@@ -57,6 +52,5 @@ namespace TF2.MainConsole
 		}
 
 		public delegate Boolean AskCommit(String commitTitle);
-		public delegate void ShowUpdateError(Terminal.Result errorResult);
 	}
 }
