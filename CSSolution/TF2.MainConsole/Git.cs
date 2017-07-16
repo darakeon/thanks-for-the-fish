@@ -98,9 +98,9 @@ namespace TF2.MainConsole
 			var date = commit.DateTime.ToString(@"yyyy-MM-dd HH:mm:ss (K)");
 			var message = commit.Message
 				+ Environment.NewLine + Environment.NewLine
-				+ $"by [{commit.Author}] in [{date}]";
+				+ $"by [{commit.Author}] in [{date}] - hg hash {{{commit.HgHash}}}";
 
-            Run("git", "commit", $@"-m ""{message}""", "-q");
+			this.commit(message);
 
 			var result = Run("git", "rev-parse", "HEAD");
 			commit.GitHash = result.Output;
@@ -111,6 +111,18 @@ namespace TF2.MainConsole
 			{
 				Run("git", "tag", commit.Tag);
 			}
+		}
+
+		public void CommitReversal(Commit commit)
+		{
+			Run("git", "revert", commit.GitHash, "-n");
+			var message = $"This commit reverts {commit.GitHash} and should be squashed where hg joined it back to the tree.";
+			this.commit(message);
+		}
+
+		private void commit(String message)
+		{
+			Run("git", "commit", $@"-m ""{message}""", "-q");
 		}
 	}
 }

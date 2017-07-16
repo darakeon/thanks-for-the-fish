@@ -1,10 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TF2.MainConsole
 {
 	internal class Commit
 	{
+		public Commit()
+		{
+			ParentList = new List<Commit>();
+		}
+
 		public Int32 Position { get; set; }
 		public String HgHash { get; set; }
 		public String GitHash { get; set; }
@@ -32,6 +38,10 @@ namespace TF2.MainConsole
 		{
 			return $"{Position}:{HgHash}";
 		}
+
+		public Boolean IsChildOf(Commit commit)
+		{
+			return !ParentList.Any() || ParentList.Contains(commit);
 		}
 	}
 }

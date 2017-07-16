@@ -28,7 +28,7 @@ namespace TF2.MainConsole
 			var shouldGoAhead = askGoAhead(git2Hg.CommitCount);
 			if (!shouldGoAhead) return;
 
-			var succeded = git2Hg.CommitOnGit(askOverwriteGit, notifyNewCount, askCommit);
+			var succeded = git2Hg.CommitOnGit(askOverwriteGit, notifyNewCount, askCommit, warnReversal);
 			if (!succeded) return;
 
 			finishSucceded(git2Hg.CommitCount);
@@ -90,6 +90,15 @@ namespace TF2.MainConsole
 
 			Console.WriteLine("Process stopped.");
 			return false;
+		}
+
+		private static void warnReversal()
+		{
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.WriteLine("The next commit is not a child of this one.");
+			Console.WriteLine("This is due to Hg having not rebase, and some commit reversal was done here.");
+			Console.WriteLine("You can rebase and delete reversal OR squash it to Hg merge commit, to keep log cleaner.");
+			Console.ResetColor();
 		}
 
 		private static void finishSucceded(Int32 commitCount)

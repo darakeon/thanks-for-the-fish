@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TF2.MainConsole
 {
@@ -23,7 +24,7 @@ namespace TF2.MainConsole
 			return commitList != null;
 		}
 
-		public Boolean CommitOnGit(Git.AskOverwrite askOverwriteGit, Git.NotifyNewCount notifyNewCount, AskCommit askCommit)
+		public Boolean CommitOnGit(Git.AskOverwrite askOverwriteGit, Git.NotifyNewCount notifyNewCount, AskCommit askCommit, WarnReversal warnReversal)
 		{
 			git.Init(askOverwriteGit, notifyNewCount, commitList);
 
@@ -46,11 +47,31 @@ namespace TF2.MainConsole
 
 				git.HandleBranch(commit);
 				git.AddAndCommit(commit);
+
+				var nextInBranch = 
+					commitList.FirstOrDefault(
+						n => n.Position > commit.Position 
+							&& n.Branch == commit.Branch
+					);
+				
+				if (nextInBranch != null && !nextInBranch.IsChildOf(commit))
+				{
+					var notRevert = nextInBranch.ParentList.Single();
+
+					var revertList = commitList.Where(
+						r => r.Position > notRevert.Position 
+							&& r.Position <= commit.Position
+					).ToList();
+
+					revertList.ForEach(git.CommitReversal);
+					warnReversal();
+				}
 			}
 
 			return true;
 		}
 
 		public delegate Boolean AskCommit(String commitTitle);
+		public delegate void WarnReversal();
 	}
 }
