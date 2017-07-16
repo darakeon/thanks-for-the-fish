@@ -6,7 +6,8 @@ namespace TF2.MainConsole
 	internal class Commit
 	{
 		public Int32 Position { get; set; }
-		public String Hash { get; set; }
+		public String HgHash { get; set; }
+		public String GitHash { get; set; }
 
 		private String branch;
 		public String Branch
@@ -29,7 +30,8 @@ namespace TF2.MainConsole
 
 		public override string ToString()
 		{
-			return $"{Position}:{Hash}";
+			return $"{Position}:{HgHash}";
+		}
 		}
 	}
 }

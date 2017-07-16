@@ -54,7 +54,7 @@ namespace TF2.MainConsole
 			var hashList = File.ReadAllLines(alreadyCommitedFile);
 
 			commitList
-				.Where(c => hashList.Contains(c.Hash))
+				.Where(c => hashList.Contains(c.HgHash))
 				.ToList()
 				.ForEach(c => commitList.Remove(c));
 		}
@@ -102,7 +102,10 @@ namespace TF2.MainConsole
 
             Run("git", "commit", $@"-m ""{message}""", "-q");
 
-			File.AppendAllLines(alreadyCommitedFile, new [] { commit.Hash });
+			var result = Run("git", "rev-parse", "HEAD");
+			commit.GitHash = result.Output;
+
+			File.AppendAllLines(alreadyCommitedFile, new [] { commit.HgHash });
 
 			if (!String.IsNullOrEmpty(commit.Tag))
 			{

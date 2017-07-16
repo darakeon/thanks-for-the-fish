@@ -34,7 +34,7 @@ namespace TF2.MainConsole
 				hg.Update(commit);
 				
 				var position = c + 1;
-				var title = $"[{position}/{CommitCount}] {commit.Hash}: {commit.Message}";
+				var title = $"[{position}/{CommitCount}] {commit.HgHash}: {commit.Message}";
 
 				git.RemakeIgnore();
 

@@ -60,13 +60,13 @@ namespace TF2.MainConsole
 				.Where(p => p != null).ToList();
 
 			var parentList = commitList
-				.Where(c => parentHashList.Contains(c.Hash))
+				.Where(c => parentHashList.Contains(c.HgHash))
 				.ToList();
 
 			return new Commit
 			{
 				Position = Int32.Parse(groups[1].Value),
-				Hash = groups[2].Value,
+				HgHash = groups[2].Value,
 				Branch = groups[4].Value,
 				Tag = groups[6].Value,
 				ParentList = parentList,
