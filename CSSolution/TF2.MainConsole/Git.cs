@@ -99,18 +99,21 @@ namespace TF2.MainConsole
 			var message = commit.Message
 				+ Environment.NewLine + Environment.NewLine
 				+ $"by [{commit.Author}] in [{date}] - hg hash {{{commit.HgHash}}}";
+			
+			var commited = this.commit(message);
 
-			this.commit(message);
+			if (commited)
+			{
+				var result = Run("git", "rev-parse", "HEAD");
+				commit.GitHash = result.Output;
 
-			var result = Run("git", "rev-parse", "HEAD");
-			commit.GitHash = result.Output;
+				if (!String.IsNullOrEmpty(commit.Tag))
+				{
+					Run("git", "tag", commit.Tag);
+				}
+			}
 
 			File.AppendAllLines(alreadyCommitedFile, new [] { commit.HgHash });
-
-			if (!String.IsNullOrEmpty(commit.Tag))
-			{
-				Run("git", "tag", commit.Tag);
-			}
 		}
 
 		public void CommitReversal(Commit commit)
@@ -120,9 +123,23 @@ namespace TF2.MainConsole
 			this.commit(message);
 		}
 
-		private void commit(String message)
+		private Boolean commit(String message)
 		{
-			Run("git", "commit", $@"-m ""{message}""", "-q");
+			try
+			{
+				Run("git", "commit", $@"-m ""{message}""", "-q");
+				return true;
+			}
+			catch (TerminalException e)
+			{
+				var hasError = !String.IsNullOrEmpty(e.Result.Error);
+				var emptyCommitAnswer = $"On branch master{Environment.NewLine}nothing to commit, working tree clean";
+                var isEmptyCommit = e.Result.Output.Trim() == emptyCommitAnswer;
+
+				if (hasError || !isEmptyCommit) throw;
+
+				return false;
+			}
 		}
 	}
 }

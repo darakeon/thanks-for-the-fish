@@ -46,11 +46,7 @@ namespace TF2.MainConsole
 
 			if (!result.Succedded)
 			{
-				throw new Exception(
-					$"Error on: {command} {joinedArgs}"
-                    + Environment.NewLine + result.Output 
-					+ Environment.NewLine + result.Error
-				);
+				throw new TerminalException($"{command} {joinedArgs}", result);
 			}
 
 			return result;
@@ -97,6 +93,19 @@ namespace TF2.MainConsole
 			public Int32 Code { get; private set; }
 			public String Output { get; private set; }
 			public String Error { get; private set; }
+		}
+
+		internal class TerminalException : Exception
+		{
+			public TerminalException(String command, Result result)
+				: base($"Error on: {command}"
+				       + Environment.NewLine + result.Output
+				       + Environment.NewLine + result.Error)
+			{
+				Result = result;
+			}
+
+			public Result Result { get; private set; }
 		}
 	}
 }
