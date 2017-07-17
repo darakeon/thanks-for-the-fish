@@ -109,7 +109,7 @@ namespace TF2.MainConsole
 
 				if (!String.IsNullOrEmpty(commit.Tag))
 				{
-					Run("git", "tag", commit.Tag);
+					Run("git", "tag", "-a", $@"""{commit.Tag}""", $@"-m ""{commit.Tag}""");
 				}
 			}
 
