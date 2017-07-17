@@ -118,6 +118,8 @@ namespace TF2.MainConsole
 
 		public void CommitReversal(Commit commit)
 		{
+			if (String.IsNullOrEmpty(commit.GitHash)) return;
+
 			Run("git", "revert", commit.GitHash, "-n");
 			var message = $"This commit reverts {commit.GitHash} and should be squashed where hg joined it back to the tree.";
 			this.commit(message);
