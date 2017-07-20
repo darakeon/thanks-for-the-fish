@@ -105,7 +105,7 @@ namespace TF2.MainConsole
 			if (commited)
 			{
 				var result = Run("git", "rev-parse", "HEAD");
-				commit.GitHash = result.Output;
+				commit.GitHash = result.Output.Trim();
 
 				if (!String.IsNullOrEmpty(commit.Tag))
 				{
