@@ -106,11 +106,11 @@ namespace TF2.MainConsole
 			{
 				var result = Run("git", "rev-parse", "HEAD");
 				commit.GitHash = result.Output.Trim();
+			}
 
-				if (!String.IsNullOrEmpty(commit.Tag))
-				{
-					Run("git", "tag", "-a", $@"""{commit.Tag}""", $@"-m ""{commit.Tag}""");
-				}
+			if (!String.IsNullOrEmpty(commit.Tag))
+			{
+				Run("git", "tag", "-a", $@"""{commit.Tag}""", $@"-m ""{commit.Tag}""");
 			}
 
 			File.AppendAllLines(alreadyCommitedFile, new [] { commit.HgHash });
