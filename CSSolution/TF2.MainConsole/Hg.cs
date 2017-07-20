@@ -65,6 +65,7 @@ namespace TF2.MainConsole
 
 			return new Commit
 			{
+				Log = groups[0].Value,
 				Position = Int32.Parse(groups[1].Value),
 				HgHash = groups[2].Value,
 				Branch = groups[4].Value,

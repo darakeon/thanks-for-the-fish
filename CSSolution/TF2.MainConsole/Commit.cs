@@ -11,6 +11,8 @@ namespace TF2.MainConsole
 			ParentList = new List<Commit>();
 		}
 
+		public String Log { get; set; }
+
 		public Int32 Position { get; set; }
 		public String HgHash { get; set; }
 		public String GitHash { get; set; }
