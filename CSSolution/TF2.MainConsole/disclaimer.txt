@@ -5,8 +5,6 @@ Your Mercurial repository was successfully find.
 In each commit, the command "git add ." is executed before commiting.
 The file .gitignore is copied from .hgignore too, being overwritten.
 
-The current version of the program works on ONE branch only.
-
 ========================================================================
 IMPORTANT:
 
@@ -17,7 +15,6 @@ implemented.
 
 "Oh, my god! Your program is a shit, how can you do this to me?!"
 You are welcome to implement the feature of ignore some commit to doing
-it yourself and keep commiting on program after that. The branches
-handling is a desired thing too.
+it yourself and keep commiting on program after that.
 
 https://github.com/darakeon/thanks-for-the-fish
