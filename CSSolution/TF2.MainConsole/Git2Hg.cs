@@ -9,7 +9,7 @@ namespace TF2.MainConsole
 		private readonly Hg hg;
 		private readonly Git git;
 
-		public Int32 CommitCount => commitList?.Count ?? 0;
+		public Int32 CommitCount;
 		private IList<Commit> commitList;
 
 		public Git2Hg(String sourceDirectory)
@@ -21,20 +21,23 @@ namespace TF2.MainConsole
 		public Boolean PopulateCommitList(Hg.ShowSequenceError showSequenceError)
 		{
 			commitList = hg.PopulateCommitList(showSequenceError);
+			CommitCount = commitList.Count;
 			return commitList != null;
 		}
 
 		public Boolean CommitOnGit(Git.AskOverwrite askOverwriteGit, Git.NotifyNewCount notifyNewCount, AskCommit askCommit, WarnReversal warnReversal)
 		{
-			git.Init(askOverwriteGit, notifyNewCount, commitList);
+			var alreadyCommited = git.Init(askOverwriteGit, notifyNewCount, commitList);
+			var position = 0;
+			CommitCount = commitList.Count - alreadyCommited.Count;
 
-			for (var c = 0; c < commitList.Count; c++)
+			foreach (var commit in commitList)
 			{
-				var commit = commitList[c];
+				if (alreadyCommited.Contains(commit)) continue;
 
 				hg.Update(commit);
-				
-				var position = c + 1;
+
+				position++;
 				var title = $"[{position}/{CommitCount}] {commit.HgHash}: {commit.Message}";
 
 				git.RemakeIgnore();
@@ -52,7 +55,7 @@ namespace TF2.MainConsole
 					commitList.FirstOrDefault(
 						n => n.Position > commit.Position 
 							&& n.Branch == commit.Branch
-					);
+						);
 				
 				if (nextInBranch != null && !nextInBranch.IsChildOf(commit))
 				{
@@ -61,7 +64,7 @@ namespace TF2.MainConsole
 					var revertList = commitList.Where(
 						r => r.Position > notRevert.Position 
 							&& r.Position <= commit.Position
-					).ToList();
+					).OrderByDescending(r => r.Position).ToList();
 
 					revertList.ForEach(git.CommitReversal);
 					warnReversal();

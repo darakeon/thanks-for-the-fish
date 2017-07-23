@@ -67,12 +67,12 @@ namespace TF2.MainConsole
 			return answer.ToLower() == "o";
 		}
 
-		private static void notifyNewCount(Int32 oldCount, Int32 newCount)
+		private static void notifyNewCount(Int32 total, Int32 diff)
 		{
 			Console.WriteLine();
 			Console.ForegroundColor = ConsoleColor.Cyan;
-			Console.WriteLine($"From log, there is {oldCount - newCount} commit(s) already recorded on git.");
-			Console.WriteLine($"New commits count: {newCount}.");
+			Console.WriteLine($"From log, there is {diff} commit(s) already recorded on git.");
+			Console.WriteLine($"New commits count: {total - diff}.");
 			Console.ResetColor();
 		}
 

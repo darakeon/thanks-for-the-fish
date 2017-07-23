@@ -19,9 +19,9 @@ namespace TF2.MainConsole
 		}
 		
 		internal delegate Boolean AskOverwrite();
-		internal delegate void NotifyNewCount(Int32 oldCount, Int32 newCount);
+		internal delegate void NotifyNewCount(Int32 total, Int32 diff);
 
-		public void Init(AskOverwrite askOverwrite, NotifyNewCount notifyNewCount, IList<Commit> commitList)
+		public IList<Commit> Init(AskOverwrite askOverwrite, NotifyNewCount notifyNewCount, IList<Commit> commitList)
 		{
 			var gitConfig = Path.Combine(sourceDirectory, ".git");
 
@@ -32,12 +32,11 @@ namespace TF2.MainConsole
 				if (!shouldOverwrite)
 				{
 					var oldCount = commitList.Count;
-					removeAlreadyCommited(commitList);
-					var newCount = commitList.Count;
+					var alreadyCommited = getAlreadyCommited(commitList);
 
-					if (oldCount != newCount) notifyNewCount(oldCount, newCount);
+					if (alreadyCommited != null) notifyNewCount(oldCount, alreadyCommited.Count);
 
-					return;
+					return alreadyCommited;
 				}
 
 				Directory.Delete(gitConfig, true);
@@ -45,18 +44,31 @@ namespace TF2.MainConsole
 
 			Run("git", "init");
 			File.WriteAllText(alreadyCommitedFile, String.Empty);
+			return null;
 		}
 
-		private void removeAlreadyCommited(IList<Commit> commitList)
+		private IList<Commit> getAlreadyCommited(IList<Commit> commitList)
 		{
-			if (!File.Exists(alreadyCommitedFile)) return;
+			if (!File.Exists(alreadyCommitedFile)) return null;
 
-			var hashList = File.ReadAllLines(alreadyCommitedFile);
+			var commitedHashList = File.ReadAllLines(alreadyCommitedFile);
+			var result = new List<Commit>();
 
-			commitList
-				.Where(c => hashList.Contains(c.HgHash))
-				.ToList()
-				.ForEach(c => commitList.Remove(c));
+			foreach (var commitedHash in commitedHashList)
+			{
+				var hashs = commitedHash.Split('|');
+				var hg = hashs[0];
+
+				var commit = commitList.Single(c => c.HgHash == hg);
+				result.Add(commit);
+
+				if (hashs.Length > 1)
+				{
+					commit.GitHash = hashs[1];
+				}
+			}
+
+			return result;
 		}
 
 		public void RemakeIgnore()
@@ -113,7 +125,7 @@ namespace TF2.MainConsole
 				Run("git", "tag", "-a", $@"""{commit.Tag}""", $@"-m ""{commit.Tag}""");
 			}
 
-			File.AppendAllLines(alreadyCommitedFile, new [] { commit.HgHash });
+			File.AppendAllLines(alreadyCommitedFile, new [] { $"{commit.HgHash}|{commit.GitHash}" });
 		}
 
 		public void CommitReversal(Commit commit)
