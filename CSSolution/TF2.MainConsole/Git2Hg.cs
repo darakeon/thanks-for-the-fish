@@ -40,8 +40,9 @@ namespace TF2.MainConsole
 				hg.Update(commit);
 				git.RemakeIgnore();
 
-				var title = $"[{position}/{CommitCount}] {commit.HgHash}: {commit.Message}";
-                var shouldCommit = askCommit(title);
+				var title = $"[{position}/{CommitCount}] {commit.HgHash}: "
+					+ $"({commit.DateTime.ToString("yyyy-MM-dd")}) {commit.Message}";
+				var shouldCommit = askCommit(title);
 				if (!shouldCommit)
 				{
 					return false;
