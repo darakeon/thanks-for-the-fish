@@ -35,14 +35,13 @@ namespace TF2.MainConsole
 			{
 				if (alreadyCommited.Contains(commit)) continue;
 
-				hg.Update(commit);
-
 				position++;
-				var title = $"[{position}/{CommitCount}] {commit.HgHash}: {commit.Message}";
 
+				hg.Update(commit);
 				git.RemakeIgnore();
 
-				var shouldCommit = askCommit(title);
+				var title = $"[{position}/{CommitCount}] {commit.HgHash}: {commit.Message}";
+                var shouldCommit = askCommit(title);
 				if (!shouldCommit)
 				{
 					return false;
