@@ -141,7 +141,7 @@ namespace TF2.MainConsole
 		{
 			try
 			{
-				Run("git", "commit", $@"-m ""{message}""", "-q");
+				Run("git", "commit", $@"-m ""{message.Replace(@"""", "'")}""", "-q");
 				return true;
 			}
 			catch (TerminalException e)
