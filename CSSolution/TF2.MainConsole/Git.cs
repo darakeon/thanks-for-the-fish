@@ -147,8 +147,8 @@ namespace TF2.MainConsole
 			catch (TerminalException e)
 			{
 				var hasError = !String.IsNullOrEmpty(e.Result.Error);
-				var emptyCommitAnswer = $"On branch master{Environment.NewLine}nothing to commit, working tree clean";
-                var isEmptyCommit = e.Result.Output.Trim() == emptyCommitAnswer;
+				var emptyCommitAnswer = "nothing to commit, working tree clean";
+                var isEmptyCommit = e.Result.Output.Trim().EndsWith(emptyCommitAnswer);
 
 				if (hasError || !isEmptyCommit) throw;
 
